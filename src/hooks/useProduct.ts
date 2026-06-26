@@ -1,43 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import type { Product } from '../types/product';
 import { getProduct } from '../services/products';
+import { useFetch } from './useFetch';
 
 interface UseProductState {
   product: Product | null;
   loading: boolean;
   error: string | null;
+  rawError: Error | null;
 }
 
-export function useProduct(id: number) {
-  const [state, setState] = useState<UseProductState>({
-    product: null,
-    loading: true,
-    error: null,
-  });
+export function useProduct(id: number): UseProductState {
+  const fetcher = useCallback(
+    (signal: AbortSignal) => getProduct(id, signal),
+    [id]
+  );
+  const { data, loading, error } = useFetch(fetcher);
 
-  useEffect(() => {
-    let cancelled = false;
-
-    getProduct(id)
-      .then((data) => {
-        if (!cancelled) {
-          setState({ product: data, loading: false, error: null });
-        }
-      })
-      .catch((err) => {
-        if (!cancelled) {
-          setState({
-            product: null,
-            loading: false,
-            error: err instanceof Error ? err.message : 'Неизвестная ошибка',
-          });
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [id]);
-
-  return state;
+  return {
+    product: data,
+    loading,
+    error: error?.message ?? null,
+    rawError: error,
+  };
 }

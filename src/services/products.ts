@@ -1,10 +1,17 @@
 import type { Product, ProductsResponse } from '../types/product';
 import { getResource } from './api';
 
-export function getProducts(limit: number = 20, skip: number = 0) {
-  return getResource<ProductsResponse>(`/products?limit=${limit}&skip=${skip}`);
+export function getProducts(
+  limit: number = 20,
+  skip: number = 0,
+  signal?: AbortSignal
+) {
+  return getResource<ProductsResponse>(
+    `/products?limit=${limit}&skip=${skip}`,
+    signal
+  );
 }
 
-export function getProduct(id: number) {
-  return getResource<Product>(`/products/${id}`);
+export function getProduct(id: number, signal?: AbortSignal) {
+  return getResource<Product>(`/products/${id}`, signal);
 }

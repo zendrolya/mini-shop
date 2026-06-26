@@ -12,11 +12,17 @@ import {
 } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useProduct } from '../hooks/useProduct';
+import { ApiError } from '../services/api';
 
 export default function ProductPage() {
   const { id } = useParams<{ id: string }>();
   const productId = Number(id);
-  const { product, loading, error } = useProduct(productId);
+  const { product, loading, error, rawError } = useProduct(productId);
+
+  const errorMessage =
+    rawError instanceof ApiError && rawError.status === 404
+      ? 'Такого товара не существует'
+      : error;
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -26,9 +32,9 @@ export default function ProductPage() {
         </Box>
       )}
 
-      {error && (
+      {errorMessage && (
         <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
+          {errorMessage}
         </Alert>
       )}
 

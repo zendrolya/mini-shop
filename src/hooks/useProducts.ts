@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import type { Product } from '../types/product';
 import { getProducts } from '../services/products';
+import { useFetch } from './useFetch';
 
 interface UseProductsState {
   products: Product[];
@@ -8,36 +9,16 @@ interface UseProductsState {
   error: string | null;
 }
 
-export function useProducts() {
-  const [state, setState] = useState<UseProductsState>({
-    products: [],
-    loading: true,
-    error: null,
-  });
+export function useProducts(): UseProductsState {
+  const fetcher = useCallback(
+    (signal: AbortSignal) => getProducts(20, 0, signal),
+    []
+  );
+  const { data, loading, error } = useFetch(fetcher);
 
-  useEffect(() => {
-    let cancelled = false;
-
-    getProducts()
-      .then((data) => {
-        if (!cancelled) {
-          setState({ products: data.products, loading: false, error: null });
-        }
-      })
-      .catch((err) => {
-        if (!cancelled) {
-          setState({
-            products: [],
-            loading: false,
-            error: err instanceof Error ? err.message : 'Неизвестная ошибка',
-          });
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  return state;
+  return {
+    products: data?.products ?? [],
+    loading,
+    error: error?.message ?? null,
+  };
 }
