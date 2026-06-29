@@ -1,24 +1,26 @@
 import { useCallback } from 'react';
 import type { Product } from '../types/product';
-import { getProducts } from '../services/products';
+import { getProduct } from '../services/products';
 import { useFetch } from './useFetch';
 
-interface UseProductsState {
-  products: Product[];
+interface UseProductState {
+  product: Product | null;
   loading: boolean;
   error: string | null;
+  rawError: Error | null;
 }
 
-export function useProducts(): UseProductsState {
+export function useProduct(id: number): UseProductState {
   const fetcher = useCallback(
-    (signal: AbortSignal) => getProducts(20, 0, signal),
-    []
+    (signal: AbortSignal) => getProduct(id, signal),
+    [id]
   );
   const { data, loading, error } = useFetch(fetcher);
 
   return {
-    products: data?.products ?? [],
+    product: data,
     loading,
     error: error?.message ?? null,
+    rawError: error,
   };
 }
