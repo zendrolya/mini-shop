@@ -1,7 +1,6 @@
-import { useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import type { Product } from '../types/product';
 import { getProduct } from '../services/products';
-import { useFetch } from './useFetch';
 
 interface UseProductState {
   product: Product | null;
@@ -11,15 +10,14 @@ interface UseProductState {
 }
 
 export function useProduct(id: number): UseProductState {
-  const fetcher = useCallback(
-    (signal: AbortSignal) => getProduct(id, signal),
-    [id]
-  );
-  const { data, loading, error } = useFetch(fetcher);
+  const { data, isPending, error } = useQuery<Product>({
+    queryKey: ['product', id],
+    queryFn: ({ signal }) => getProduct(id, signal),
+  });
 
   return {
-    product: data,
-    loading,
+    product: data ?? null,
+    loading: isPending,
     error: error?.message ?? null,
     rawError: error,
   };

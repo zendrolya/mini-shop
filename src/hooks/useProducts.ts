@@ -1,7 +1,6 @@
-import { useCallback } from 'react';
-import type { Product } from '../types/product';
+import { useQuery } from '@tanstack/react-query';
+import type { Product, ProductsResponse } from '../types/product';
 import { getProducts, searchProducts } from '../services/products';
-import { useFetch } from './useFetch';
 import { useDebounce } from './useDebounce';
 
 const DEBOUNCE_DELAY_MS = 1000;
@@ -17,8 +16,9 @@ interface UseProductsState {
 export function useProducts(query: string = ''): UseProductsState {
   const debouncedQuery = useDebounce(query, DEBOUNCE_DELAY_MS);
 
-  const fetcher = useCallback(
-    (signal: AbortSignal) => {
+  const { data, isPending, error } = useQuery<ProductsResponse>({
+    queryKey: ['products', debouncedQuery],
+    queryFn: ({ signal }) => {
       if (debouncedQuery.trim()) {
         return searchProducts(
           debouncedQuery.trim(),
@@ -29,14 +29,11 @@ export function useProducts(query: string = ''): UseProductsState {
       }
       return getProducts(PRODUCTS_LIMIT, PRODUCTS_SKIP, signal);
     },
-    [debouncedQuery]
-  );
-
-  const { data, loading, error } = useFetch(fetcher);
+  });
 
   return {
     products: data?.products ?? [],
-    loading,
+    loading: isPending,
     error: error?.message ?? null,
   };
 }
