@@ -1,9 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import type { Product, ProductsResponse } from '../types/product';
 import { getProducts, searchProducts } from '../services/products';
-import { useDebounce } from './useDebounce';
 
-const DEBOUNCE_DELAY_MS = 1000;
 const PRODUCTS_LIMIT = 20;
 const PRODUCTS_SKIP = 0;
 
@@ -14,14 +12,12 @@ interface UseProductsState {
 }
 
 export function useProducts(query: string = ''): UseProductsState {
-  const debouncedQuery = useDebounce(query, DEBOUNCE_DELAY_MS);
-
   const { data, isPending, error } = useQuery<ProductsResponse>({
-    queryKey: ['products', debouncedQuery],
+    queryKey: ['products', query],
     queryFn: ({ signal }) => {
-      if (debouncedQuery.trim()) {
+      if (query.trim()) {
         return searchProducts(
-          debouncedQuery.trim(),
+          query.trim(),
           PRODUCTS_LIMIT,
           PRODUCTS_SKIP,
           signal

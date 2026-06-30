@@ -6,13 +6,9 @@ import {
   Box,
   CircularProgress,
   Alert,
-  TextField,
-  InputAdornment,
-  IconButton,
 } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import ClearIcon from '@mui/icons-material/Clear';
 import { useProducts } from '../hooks/useProducts';
+import SearchInput from '../components/SearchInput';
 import ProductCard from '../components/ProductCard';
 import EmptyState from '../components/EmptyState';
 
@@ -33,33 +29,7 @@ export default function CatalogPage() {
         }}
       >
         <Typography variant="h2">Каталог товаров</Typography>
-        <TextField
-          size="small"
-          placeholder="Поиск товаров..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          slotProps={{
-            input: {
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon color="action" />
-                </InputAdornment>
-              ),
-              endAdornment: searchQuery && (
-                <InputAdornment position="end">
-                  <IconButton
-                    size="small"
-                    aria-label="Очистить поиск"
-                    onClick={() => setSearchQuery('')}
-                  >
-                    <ClearIcon fontSize="small" />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            },
-          }}
-          sx={{ minWidth: 260 }}
-        />
+        <SearchInput onSearch={setSearchQuery} />
       </Box>
 
       {loading && (
