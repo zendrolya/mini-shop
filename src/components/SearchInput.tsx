@@ -23,9 +23,14 @@ export default function SearchInput({
   });
 
   useEffect(() => {
+    if (timerRef.current !== null) {
+      clearTimeout(timerRef.current);
+    }
+
     timerRef.current = setTimeout(() => {
       onSearchRef.current(value);
     }, DEBOUNCE_DELAY_MS);
+
     return () => {
       if (timerRef.current !== null) {
         clearTimeout(timerRef.current);
