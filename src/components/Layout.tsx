@@ -113,7 +113,7 @@ export default function Layout() {
       </AppBar>
 
       <Box component="main" sx={{ flexGrow: 1 }}>
-        <Outlet />
+        <Outlet key={location.pathname} />
       </Box>
 
       <Box
