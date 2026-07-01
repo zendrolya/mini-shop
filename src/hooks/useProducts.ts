@@ -8,10 +8,10 @@ import {
 } from '../services/products';
 
 const PRODUCTS_LIMIT = 20;
-const PRODUCTS_SKIP = 0;
 
 interface UseProductsState {
   products: Product[];
+  total: number;
   loading: boolean;
   error: string | null;
 }
@@ -28,29 +28,21 @@ function matchesQuery(product: Product, query: string): boolean {
 
 export function useProducts(
   query: string = '',
-  category: string = ''
+  category: string = '',
+  page: number = 1
 ): UseProductsState {
   const trimmedQuery = query.trim();
+  const skip = (page - 1) * PRODUCTS_LIMIT;
   const { data, isPending, error } = useQuery<ProductsResponse>({
-    queryKey: ['products', { query: trimmedQuery, category }],
+    queryKey: ['products', { query: trimmedQuery, category, page }],
     queryFn: ({ signal }) => {
       if (category) {
-        return getProductsByCategory(
-          category,
-          PRODUCTS_LIMIT,
-          PRODUCTS_SKIP,
-          signal
-        );
+        return getProductsByCategory(category, PRODUCTS_LIMIT, skip, signal);
       }
       if (trimmedQuery) {
-        return searchProducts(
-          trimmedQuery,
-          PRODUCTS_LIMIT,
-          PRODUCTS_SKIP,
-          signal
-        );
+        return searchProducts(trimmedQuery, PRODUCTS_LIMIT, skip, signal);
       }
-      return getProducts(PRODUCTS_LIMIT, PRODUCTS_SKIP, signal);
+      return getProducts(PRODUCTS_LIMIT, skip, signal);
     },
   });
 
@@ -64,6 +56,7 @@ export function useProducts(
 
   return {
     products,
+    total: data?.total ?? 0,
     loading: isPending,
     error: error?.message ?? null,
   };

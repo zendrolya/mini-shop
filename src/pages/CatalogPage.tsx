@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   Container,
   Typography,
@@ -14,6 +14,7 @@ import CategoryFilter from '../components/CategoryFilter';
 import SortSelect from '../components/SortSelect';
 import ProductCard from '../components/ProductCard';
 import EmptyState from '../components/EmptyState';
+import Pagination from '../components/Pagination';
 import type { SortOption, Product } from '../types/product';
 
 function sortProducts(products: Product[], sortBy: SortOption): Product[] {
@@ -38,21 +39,40 @@ export default function CatalogPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [category, setCategory] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('default');
+  const [page, setPage] = useState(1);
 
-  const { products, loading, error } = useProducts(searchQuery, category);
+  const { products, total, loading, error } = useProducts(
+    searchQuery,
+    category,
+    page
+  );
   const { categories, loading: categoriesLoading } = useCategoryProducts();
+
+  const LIMIT = 20;
+  const TOTAL_PAGES = Math.max(1, Math.ceil(total / LIMIT));
+
+  const handleSearch = useCallback((query: string) => {
+    setSearchQuery(query);
+    setPage(1);
+  }, []);
+
+  const handlePageChange = useCallback((newPage: number) => {
+    setPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   const sortedProducts = useMemo(
     () => sortProducts(products, sortBy),
     [products, sortBy]
   );
 
-  const handleCategorySelect = (slug: string) => {
+  const handleCategorySelect = useCallback((slug: string) => {
     setCategory(slug);
+    setPage(1);
     if (slug) {
       setSearchQuery('');
     }
-  };
+  }, []);
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -67,7 +87,7 @@ export default function CatalogPage() {
         }}
       >
         <Typography variant="h2">Каталог товаров</Typography>
-        <SearchInput onSearch={setSearchQuery} />
+        <SearchInput onSearch={handleSearch} />
       </Box>
 
       <Box
@@ -107,13 +127,20 @@ export default function CatalogPage() {
           {sortedProducts.length === 0 ? (
             <EmptyState />
           ) : (
-            <Grid container spacing={3}>
-              {sortedProducts.map((product) => (
-                <Grid key={product.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-                  <ProductCard product={product} />
-                </Grid>
-              ))}
-            </Grid>
+            <>
+              <Grid container spacing={3}>
+                {sortedProducts.map((product) => (
+                  <Grid key={product.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+                    <ProductCard product={product} />
+                  </Grid>
+                ))}
+              </Grid>
+              <Pagination
+                page={page}
+                totalPages={TOTAL_PAGES}
+                onPageChange={handlePageChange}
+              />
+            </>
           )}
         </>
       )}
