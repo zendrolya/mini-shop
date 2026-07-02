@@ -12,12 +12,14 @@ import {
 } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useProduct } from '../hooks/useProduct';
+import { useCart } from '../hooks/useCart';
 import { ApiError } from '../services/api';
 
 export default function ProductPage() {
   const { id } = useParams<{ id: string }>();
   const productId = Number(id);
   const { product, loading, error, rawError } = useProduct(productId);
+  const { addItem } = useCart();
 
   const errorMessage =
     rawError instanceof ApiError && rawError.status === 404
@@ -141,6 +143,7 @@ export default function ProductPage() {
               size="large"
               startIcon={<ShoppingCartIcon />}
               sx={{ mt: 2, alignSelf: 'flex-start', px: 4 }}
+              onClick={() => product && addItem(product)}
             >
               В корзину
             </Button>
