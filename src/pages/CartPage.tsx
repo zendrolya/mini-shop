@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import {
   Container,
@@ -14,10 +15,12 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useCart } from '../hooks/useCart';
 import EmptyState from '../components/EmptyState';
+import OrderForm from '../components/OrderForm';
 
 export default function CartPage() {
   const { items, totalPrice, updateQuantity, removeItem, clearCart } =
     useCart();
+  const [showForm, setShowForm] = useState(false);
 
   if (items.length === 0) {
     return (
@@ -28,6 +31,19 @@ export default function CartPage() {
         <EmptyState
           title="Ваша корзина пуста"
           description="Добавьте товары из каталога, чтобы оформить заказ"
+        />
+      </Container>
+    );
+  }
+
+  if (showForm) {
+    return (
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <OrderForm
+          items={items}
+          totalPrice={totalPrice}
+          onSubmit={(values) => values}
+          onBack={() => setShowForm(false)}
         />
       </Container>
     );
@@ -186,7 +202,7 @@ export default function CartPage() {
           color="secondary"
           size="large"
           startIcon={<ShoppingCartIcon />}
-          disabled
+          onClick={() => setShowForm(true)}
           sx={{ px: 6 }}
         >
           Оформить заказ
