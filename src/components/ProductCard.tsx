@@ -11,12 +11,14 @@ import {
 } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import type { Product } from '../types/product';
+import { useCart } from '../hooks/useCart';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const { addItem } = useCart();
   return (
     <Card
       sx={{
@@ -75,6 +77,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           variant="contained"
           color="secondary"
           startIcon={<ShoppingCartIcon />}
+          onClick={() => addItem(product)}
         >
           В корзину
         </Button>

@@ -11,11 +11,13 @@ import {
 } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import StorefrontIcon from '@mui/icons-material/Storefront';
+import { useCart } from '../hooks/useCart';
 
 const navLinks = [{ label: 'Каталог', to: '/' }];
 
 export default function Layout() {
   const location = useLocation();
+  const { totalCount } = useCart();
 
   return (
     <Box
@@ -104,7 +106,11 @@ export default function Layout() {
                 },
               }}
             >
-              <Badge badgeContent={0} color="secondary">
+              <Badge
+                badgeContent={totalCount}
+                color="secondary"
+                invisible={totalCount === 0}
+              >
                 <ShoppingCartIcon />
               </Badge>
             </IconButton>
