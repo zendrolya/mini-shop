@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import {
   Box,
   Button,
@@ -29,12 +29,44 @@ export interface OrderFormValues {
   phone: string;
 }
 
+type FormErrors = Partial<Record<keyof OrderFormValues, string>>;
+
 const initialValues: OrderFormValues = {
   name: '',
   email: '',
   address: '',
   phone: '',
 };
+
+function validate(values: OrderFormValues): FormErrors {
+  const errors: FormErrors = {};
+
+  if (!values.name.trim()) {
+    errors.name = 'Введите имя получателя';
+  } else if (values.name.trim().length < 2) {
+    errors.name = 'Имя должно содержать минимум 2 символа';
+  }
+
+  if (!values.email.trim()) {
+    errors.email = 'Введите email';
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim())) {
+    errors.email = 'Введите корректный email';
+  }
+
+  if (!values.address.trim()) {
+    errors.address = 'Введите адрес доставки';
+  } else if (values.address.trim().length < 10) {
+    errors.address = 'Адрес должен содержать минимум 10 символов';
+  }
+
+  if (!values.phone.trim()) {
+    errors.phone = 'Введите номер телефона';
+  } else if (!/^\+?[\d\s\-()]{7,}$/.test(values.phone.trim())) {
+    errors.phone = 'Введите корректный номер телефона';
+  }
+
+  return errors;
+}
 
 export default function OrderForm({
   items,
@@ -43,16 +75,45 @@ export default function OrderForm({
   onBack,
 }: OrderFormProps) {
   const [values, setValues] = useState<OrderFormValues>(initialValues);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  const handleChange =
-    (field: keyof OrderFormValues) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setValues((prev) => ({ ...prev, [field]: e.target.value }));
-    };
+  const handleChange = useCallback(
+    (field: keyof OrderFormValues, value: string) => {
+      setValues((prev) => ({ ...prev, [field]: value }));
+      if (touched[field]) {
+        setErrors((prev) => {
+          const newValues = { ...values, [field]: value };
+          const newErrors = validate(newValues);
+          return { ...prev, [field]: newErrors[field] };
+        });
+      }
+    },
+    [values, touched]
+  );
+
+  const handleBlur = useCallback(
+    (field: keyof OrderFormValues) => {
+      setTouched((prev) => ({ ...prev, [field]: true }));
+      const newErrors = validate(values);
+      setErrors((prev) => ({ ...prev, [field]: newErrors[field] }));
+    },
+    [values]
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(values);
+    const newErrors = validate(values);
+    setErrors(newErrors);
+    setTouched({
+      name: true,
+      email: true,
+      address: true,
+      phone: true,
+    });
+    if (Object.keys(newErrors).length === 0) {
+      onSubmit(values);
+    }
   };
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -98,6 +159,7 @@ export default function OrderForm({
         <Box
           component="form"
           onSubmit={handleSubmit}
+          noValidate
           sx={{
             flex: 1,
             display: 'flex',
@@ -117,9 +179,11 @@ export default function OrderForm({
             label="Имя получателя"
             placeholder="Иван Иванов"
             value={values.name}
-            onChange={handleChange('name')}
+            onChange={(e) => handleChange('name', e.target.value)}
+            onBlur={() => handleBlur('name')}
             fullWidth
-            required
+            error={touched.name && !!errors.name}
+            helperText={touched.name ? errors.name : ''}
             slotProps={{
               input: {
                 startAdornment: (
@@ -137,9 +201,11 @@ export default function OrderForm({
             placeholder="ivan@example.com"
             type="email"
             value={values.email}
-            onChange={handleChange('email')}
+            onChange={(e) => handleChange('email', e.target.value)}
+            onBlur={() => handleBlur('email')}
             fullWidth
-            required
+            error={touched.email && !!errors.email}
+            helperText={touched.email ? errors.email : ''}
             slotProps={{
               input: {
                 startAdornment: (
@@ -156,11 +222,13 @@ export default function OrderForm({
             label="Адрес доставки"
             placeholder="г. Москва, ул. Примерная, д. 1, кв. 10"
             value={values.address}
-            onChange={handleChange('address')}
+            onChange={(e) => handleChange('address', e.target.value)}
+            onBlur={() => handleBlur('address')}
             fullWidth
-            required
             multiline
             minRows={2}
+            error={touched.address && !!errors.address}
+            helperText={touched.address ? errors.address : ''}
             slotProps={{
               input: {
                 startAdornment: (
@@ -178,9 +246,11 @@ export default function OrderForm({
             placeholder="+7 (999) 123-45-67"
             type="tel"
             value={values.phone}
-            onChange={handleChange('phone')}
+            onChange={(e) => handleChange('phone', e.target.value)}
+            onBlur={() => handleBlur('phone')}
             fullWidth
-            required
+            error={touched.phone && !!errors.phone}
+            helperText={touched.phone ? errors.phone : ''}
             slotProps={{
               input: {
                 startAdornment: (
@@ -199,6 +269,7 @@ export default function OrderForm({
             color="secondary"
             size="large"
             startIcon={<LocalShippingIcon />}
+            disabled={Object.keys(validate(values)).length > 0}
             sx={{ mt: 1, px: 5, alignSelf: { xs: 'stretch', md: 'flex-end' } }}
           >
             Подтвердить заказ
