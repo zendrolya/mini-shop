@@ -8,10 +8,14 @@ import {
   Typography,
   Rating,
   Button,
+  IconButton,
 } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import StarIcon from '@mui/icons-material/Star';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
 import type { Product } from '../types/product';
 import { useCart } from '../hooks/useCart';
+import { useFavorites } from '../hooks/useFavorites';
 
 interface ProductCardProps {
   product: Product;
@@ -19,6 +23,8 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCart();
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const favorite = isFavorite(product.id);
   return (
     <Card
       sx={{
@@ -71,7 +77,17 @@ export default function ProductCard({ product }: ProductCardProps) {
           </Typography>
         </CardContent>
       </Box>
-      <CardActions sx={{ p: 2, pt: 0 }}>
+      <CardActions sx={{ p: 2, pt: 0, justifyContent: 'space-between' }}>
+        <IconButton
+          size="small"
+          onClick={() => toggleFavorite(product)}
+          sx={{
+            color: favorite ? 'secondary.main' : 'text.secondary',
+            '&:hover': { color: 'secondary.main' },
+          }}
+        >
+          {favorite ? <StarIcon /> : <StarBorderIcon />}
+        </IconButton>
         <Button
           fullWidth
           variant="contained"

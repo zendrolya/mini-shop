@@ -6,6 +6,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import theme from './theme/theme';
 import { CartProvider } from './context/CartContext';
+import { FavoritesProvider } from './context/FavoritesContext';
 import App from './App';
 import './index.css';
 
@@ -18,7 +19,9 @@ createRoot(document.getElementById('root')!).render(
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <CartProvider>
-            <App />
+            <FavoritesProvider>
+              <App />
+            </FavoritesProvider>
           </CartProvider>
         </ThemeProvider>
       </BrowserRouter>

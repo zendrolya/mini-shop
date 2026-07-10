@@ -9,10 +9,14 @@ import {
   Chip,
   Button,
   Divider,
+  IconButton,
 } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import StarIcon from '@mui/icons-material/Star';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
 import { useProduct } from '../hooks/useProduct';
 import { useCart } from '../hooks/useCart';
+import { useFavorites } from '../hooks/useFavorites';
 import { ApiError } from '../services/api';
 
 export default function ProductPage() {
@@ -20,6 +24,7 @@ export default function ProductPage() {
   const productId = Number(id);
   const { product, loading, error, rawError } = useProduct(productId);
   const { addItem } = useCart();
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   const errorMessage =
     rawError instanceof ApiError && rawError.status === 404
@@ -137,16 +142,37 @@ export default function ProductPage() {
               </Typography>
             </Box>
 
-            <Button
-              variant="contained"
-              color="secondary"
-              size="large"
-              startIcon={<ShoppingCartIcon />}
-              sx={{ mt: 2, alignSelf: 'flex-start', px: 4 }}
-              onClick={() => product && addItem(product)}
-            >
-              В корзину
-            </Button>
+            <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+              <Button
+                variant="contained"
+                color="secondary"
+                size="large"
+                startIcon={<ShoppingCartIcon />}
+                sx={{ px: 4 }}
+                onClick={() => product && addItem(product)}
+              >
+                В корзину
+              </Button>
+              {product && (
+                <IconButton
+                  size="large"
+                  onClick={() => toggleFavorite(product)}
+                  sx={{
+                    color: isFavorite(product.id)
+                      ? 'secondary.main'
+                      : 'text.secondary',
+                    border: '1px solid rgba(0,0,0,0.12)',
+                    '&:hover': { color: 'secondary.main' },
+                  }}
+                >
+                  {isFavorite(product.id) ? (
+                    <StarIcon fontSize="large" />
+                  ) : (
+                    <StarBorderIcon fontSize="large" />
+                  )}
+                </IconButton>
+              )}
+            </Box>
           </Box>
         </Box>
       )}

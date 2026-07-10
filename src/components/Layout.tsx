@@ -10,14 +10,17 @@ import {
   Link,
 } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import StarIcon from '@mui/icons-material/Star';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import { useCart } from '../hooks/useCart';
+import { useFavorites } from '../hooks/useFavorites';
 
 const navLinks = [{ label: 'Каталог', to: '/' }];
 
 export default function Layout() {
   const location = useLocation();
   const { totalCount } = useCart();
+  const { totalCount: favoritesCount } = useFavorites();
 
   return (
     <Box
@@ -87,6 +90,33 @@ export default function Layout() {
                 </Link>
               ))}
             </Box>
+
+            <IconButton
+              component={RouterLink}
+              to="/favorites"
+              sx={{
+                color:
+                  location.pathname === '/favorites'
+                    ? 'secondary.main'
+                    : 'text.primary',
+                backgroundColor:
+                  location.pathname === '/favorites'
+                    ? 'rgba(233, 69, 96, 0.08)'
+                    : 'transparent',
+                '&:hover': {
+                  backgroundColor: 'rgba(233, 69, 96, 0.06)',
+                  color: 'secondary.main',
+                },
+              }}
+            >
+              <Badge
+                badgeContent={favoritesCount}
+                color="secondary"
+                invisible={favoritesCount === 0}
+              >
+                <StarIcon />
+              </Badge>
+            </IconButton>
 
             <IconButton
               component={RouterLink}
