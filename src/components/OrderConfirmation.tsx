@@ -35,7 +35,11 @@ export default function OrderConfirmation({
           variant="outlined"
           sx={{ borderColor: 'rgba(0,0,0,0.12)', color: 'text.secondary' }}
         />
-        <Chip label="3. Подтверждение" color="secondary" sx={{ fontWeight: 600 }} />
+        <Chip
+          label="3. Подтверждение"
+          color="secondary"
+          sx={{ fontWeight: 600 }}
+        />
       </Box>
 
       {/* Success message */}
@@ -51,9 +55,7 @@ export default function OrderConfirmation({
           border: '1px solid rgba(0,0,0,0.06)',
         }}
       >
-        <CheckCircleIcon
-          sx={{ fontSize: 80, color: 'success.main' }}
-        />
+        <CheckCircleIcon sx={{ fontSize: 80, color: 'success.main' }} />
         <Typography variant="h3" sx={{ fontWeight: 700, textAlign: 'center' }}>
           Заказ успешно оформлен!
         </Typography>
