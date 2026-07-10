@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import {
   Container,
@@ -14,15 +14,38 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useCart } from '../hooks/useCart';
+import type { CartItem } from '../types/cart';
 import EmptyState from '../components/EmptyState';
 import OrderForm from '../components/OrderForm';
+import type { OrderFormValues } from '../components/OrderForm';
+import OrderConfirmation from '../components/OrderConfirmation';
+
+type Step = 'cart' | 'form' | 'confirmation';
+
+interface OrderSnapshot {
+  items: CartItem[];
+  totalPrice: number;
+  formValues: OrderFormValues;
+}
 
 export default function CartPage() {
   const { items, totalPrice, updateQuantity, removeItem, clearCart } =
     useCart();
-  const [showForm, setShowForm] = useState(false);
+  const [step, setStep] = useState<Step>('cart');
+  const [orderSnapshot, setOrderSnapshot] = useState<OrderSnapshot | null>(
+    null
+  );
 
-  if (items.length === 0) {
+  const handleFormSubmit = useCallback(
+    (values: OrderFormValues) => {
+      setOrderSnapshot({ items, totalPrice, formValues: values });
+      clearCart();
+      setStep('confirmation');
+    },
+    [items, totalPrice, clearCart]
+  );
+
+  if (items.length === 0 && step !== 'confirmation') {
     return (
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Typography variant="h2" gutterBottom>
@@ -36,14 +59,26 @@ export default function CartPage() {
     );
   }
 
-  if (showForm) {
+  if (step === 'confirmation' && orderSnapshot) {
+    return (
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <OrderConfirmation
+          items={orderSnapshot.items}
+          totalPrice={orderSnapshot.totalPrice}
+          formValues={orderSnapshot.formValues}
+        />
+      </Container>
+    );
+  }
+
+  if (step === 'form') {
     return (
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <OrderForm
           items={items}
           totalPrice={totalPrice}
-          onSubmit={(values) => values}
-          onBack={() => setShowForm(false)}
+          onSubmit={handleFormSubmit}
+          onBack={() => setStep('cart')}
         />
       </Container>
     );
@@ -202,7 +237,7 @@ export default function CartPage() {
           color="secondary"
           size="large"
           startIcon={<ShoppingCartIcon />}
-          onClick={() => setShowForm(true)}
+          onClick={() => setStep('form')}
           sx={{ px: 6 }}
         >
           Оформить заказ
