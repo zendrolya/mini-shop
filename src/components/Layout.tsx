@@ -11,9 +11,12 @@ import {
 } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import StarIcon from '@mui/icons-material/Star';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import LightModeIcon from '@mui/icons-material/LightMode';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import { useCart } from '../hooks/useCart';
 import { useFavorites } from '../hooks/useFavorites';
+import { useColorMode } from '../hooks/useColorMode';
 
 const navLinks = [{ label: 'Каталог', to: '/' }];
 
@@ -21,6 +24,7 @@ export default function Layout() {
   const location = useLocation();
   const { totalCount } = useCart();
   const { totalCount: favoritesCount } = useFavorites();
+  const { mode, toggleMode } = useColorMode();
 
   return (
     <Box
@@ -92,6 +96,19 @@ export default function Layout() {
             </Box>
 
             <IconButton
+              onClick={toggleMode}
+              sx={{
+                color: 'text.primary',
+                '&:hover': {
+                  backgroundColor: 'rgba(233, 69, 96, 0.06)',
+                  color: 'secondary.main',
+                },
+              }}
+            >
+              {mode === 'light' ? <DarkModeIcon /> : <LightModeIcon />}
+            </IconButton>
+
+            <IconButton
               component={RouterLink}
               to="/favorites"
               sx={{
@@ -157,7 +174,7 @@ export default function Layout() {
         sx={{
           py: 3,
           mt: 'auto',
-          backgroundColor: 'primary.main',
+          backgroundColor: '#1a1a2e',
           color: 'rgba(255,255,255,0.7)',
         }}
       >
