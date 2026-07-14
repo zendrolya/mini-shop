@@ -156,12 +156,18 @@ export default function ProductPage() {
               {product && (
                 <IconButton
                   size="large"
+                  aria-label={isFavorite(product.id) ? 'Убрать из избранного' : 'Добавить в избранное'}
                   onClick={() => toggleFavorite(product)}
                   sx={{
                     color: isFavorite(product.id)
                       ? 'secondary.main'
                       : 'text.secondary',
                     border: '1px solid rgba(0,0,0,0.12)',
+                    '&:focus-visible': {
+                      outline: '2px solid',
+                      outlineColor: 'secondary.main',
+                      outlineOffset: 2,
+                    },
                     '&:hover': { color: 'secondary.main' },
                   }}
                 >

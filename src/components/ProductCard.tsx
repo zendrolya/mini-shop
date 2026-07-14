@@ -31,6 +31,11 @@ export default function ProductCard({ product }: ProductCardProps) {
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
+        '&:focus-within': {
+          outline: '2px solid',
+          outlineColor: 'secondary.main',
+          outlineOffset: 2,
+        },
       }}
     >
       <Box
@@ -77,9 +82,20 @@ export default function ProductCard({ product }: ProductCardProps) {
           </Typography>
         </CardContent>
       </Box>
-      <CardActions sx={{ p: 2, pt: 0, justifyContent: 'space-between' }}>
+      <CardActions
+        sx={{
+          p: 2,
+          pt: 0,
+          justifyContent: 'space-between',
+          '& .MuiButton-root:focus-visible, & .MuiIconButton-root:focus-visible':
+            { outline: 'none' },
+        }}
+      >
         <IconButton
           size="small"
+          aria-label={
+            favorite ? 'Убрать из избранного' : 'Добавить в избранное'
+          }
           onClick={() => toggleFavorite(product)}
           sx={{
             color: favorite ? 'secondary.main' : 'text.secondary',

@@ -1,4 +1,4 @@
-import { Box, Button } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import LastPageIcon from '@mui/icons-material/LastPage';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -8,6 +8,35 @@ interface PaginationProps {
   page: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+}
+
+type PageItem = number | 'ellipsis-left' | 'ellipsis-right';
+
+function buildPageRange(current: number, total: number): PageItem[] {
+  if (total <= 7) {
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+
+  const items: PageItem[] = [1];
+
+  const left = Math.max(2, current - 1);
+  const right = Math.min(total - 1, current + 1);
+
+  if (left > 2) {
+    items.push('ellipsis-left');
+  }
+
+  for (let i = left; i <= right; i++) {
+    items.push(i);
+  }
+
+  if (right < total - 1) {
+    items.push('ellipsis-right');
+  }
+
+  items.push(total);
+
+  return items;
 }
 
 export default function Pagination({
@@ -28,58 +57,89 @@ export default function Pagination({
   const isFirst = page === 1;
   const isLast = page === totalPages;
 
-  const pages: number[] = [];
-  for (let i = 1; i <= totalPages; i++) {
-    pages.push(i);
-  }
+  const pageItems = buildPageRange(page, totalPages);
 
   return (
     <Box
+      component="nav"
+      aria-label="Навигация по страницам"
       sx={{
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         mt: 4,
-        gap: 0.5,
+        gap: { xs: 0.25, sm: 0.5 },
+        flexWrap: 'wrap',
       }}
     >
       <Button
         disabled={isFirst}
+        aria-label="Первая страница"
         onClick={() => onPageChange(1)}
-        sx={{ minWidth: 40, minHeight: 40 }}
+        sx={{
+          minWidth: { xs: 32, sm: 40 },
+          minHeight: { xs: 32, sm: 40 },
+          display: { xs: 'none', sm: 'inline-flex' },
+        }}
       >
-        <FirstPageIcon />
+        <FirstPageIcon fontSize="small" />
       </Button>
       <Button
         disabled={isFirst}
+        aria-label="Предыдущая страница"
         onClick={() => onPageChange(page - 1)}
-        sx={{ minWidth: 40, minHeight: 40 }}
+        sx={{ minWidth: { xs: 32, sm: 40 }, minHeight: { xs: 32, sm: 40 } }}
       >
-        <ChevronLeftIcon />
+        <ChevronLeftIcon fontSize="small" />
       </Button>
-      {pages.map((p) => (
-        <Button
-          key={p}
-          variant={p === page ? 'contained' : 'outlined'}
-          onClick={() => onPageChange(p)}
-          sx={{ minWidth: 40, minHeight: 40 }}
-        >
-          {p}
-        </Button>
-      ))}
+      {pageItems.map((item) => {
+        if (item === 'ellipsis-left' || item === 'ellipsis-right') {
+          return (
+            <Typography
+              key={item}
+              sx={{
+                minWidth: { xs: 16, sm: 24 },
+                textAlign: 'center',
+                userSelect: 'none',
+              }}
+              aria-hidden
+            >
+              ...
+            </Typography>
+          );
+        }
+        return (
+          <Button
+            key={item}
+            variant={item === page ? 'contained' : 'outlined'}
+            aria-current={item === page ? 'page' : undefined}
+            aria-label={`Страница ${item}`}
+            onClick={() => onPageChange(item)}
+            sx={{ minWidth: { xs: 32, sm: 40 }, minHeight: { xs: 32, sm: 40 } }}
+          >
+            {item}
+          </Button>
+        );
+      })}
       <Button
         disabled={isLast}
+        aria-label="Следующая страница"
         onClick={() => onPageChange(page + 1)}
-        sx={{ minWidth: 40, minHeight: 40 }}
+        sx={{ minWidth: { xs: 32, sm: 40 }, minHeight: { xs: 32, sm: 40 } }}
       >
-        <ChevronRightIcon />
+        <ChevronRightIcon fontSize="small" />
       </Button>
       <Button
         disabled={isLast}
+        aria-label="Последняя страница"
         onClick={() => onPageChange(totalPages)}
-        sx={{ minWidth: 40, minHeight: 40 }}
+        sx={{
+          minWidth: { xs: 32, sm: 40 },
+          minHeight: { xs: 32, sm: 40 },
+          display: { xs: 'none', sm: 'inline-flex' },
+        }}
       >
-        <LastPageIcon />
+        <LastPageIcon fontSize="small" />
       </Button>
     </Box>
   );

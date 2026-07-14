@@ -129,6 +129,22 @@ export default function getAppTheme(mode: ColorMode) {
             '&:hover': {
               transform: 'translateY(-1px)',
             },
+            '&:focus-visible': {
+              outline: '2px solid',
+              outlineColor: 'secondary.main',
+              outlineOffset: 2,
+            },
+          },
+        },
+      },
+      MuiIconButton: {
+        styleOverrides: {
+          root: {
+            '&:focus-visible': {
+              outline: '2px solid',
+              outlineColor: 'secondary.main',
+              outlineOffset: 2,
+            },
           },
         },
       },
@@ -174,6 +190,24 @@ export default function getAppTheme(mode: ColorMode) {
           root: {
             borderRadius: 8,
             fontWeight: 500,
+            '&:focus-visible': {
+              outline: '2px solid',
+              outlineColor: 'primary.main',
+              outlineOffset: 2,
+            },
+          },
+        },
+      },
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            '& .MuiInputBase-root': {
+              '&:focus-within': {
+                outline: '2px solid',
+                outlineColor: 'secondary.main',
+                outlineOffset: 2,
+              },
+            },
           },
         },
       },

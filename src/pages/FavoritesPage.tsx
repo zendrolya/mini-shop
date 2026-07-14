@@ -111,8 +111,9 @@ export default function FavoritesPage() {
             key={product.id}
             sx={{
               display: 'flex',
-              alignItems: 'center',
-              gap: 2,
+              flexDirection: { xs: 'column', sm: 'row' },
+              alignItems: { xs: 'stretch', sm: 'center' },
+              gap: { xs: 1.5, sm: 2 },
               p: 2,
               borderRadius: 3,
               border: '1px solid rgba(0,0,0,0.06)',
@@ -120,93 +121,133 @@ export default function FavoritesPage() {
             }}
           >
             <Box
-              component={RouterLink}
-              to={`/product/${product.id}`}
-              sx={{ flexShrink: 0 }}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 2,
+                flexGrow: 1,
+                minWidth: 0,
+              }}
             >
               <Box
-                component="img"
-                src={product.thumbnail}
-                alt={product.title}
-                sx={{
-                  width: 80,
-                  height: 80,
-                  objectFit: 'contain',
-                  borderRadius: 2,
-                  border: '1px solid rgba(0,0,0,0.06)',
-                }}
-              />
-            </Box>
-
-            <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-              <Typography
-                variant="subtitle1"
                 component={RouterLink}
                 to={`/product/${product.id}`}
-                noWrap
                 sx={{
-                  fontWeight: 600,
-                  textDecoration: 'none',
-                  color: 'inherit',
-                  '&:hover': { color: 'secondary.main' },
-                }}
-              >
-                {product.title}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                ${product.price} за шт.
-              </Typography>
-            </Box>
-
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <IconButton
-                size="small"
-                onClick={() => decrementQuantity(product.id)}
-                disabled={getQuantity(product.id) <= 1}
-              >
-                <RemoveIcon fontSize="small" />
-              </IconButton>
-              <TextField
-                size="small"
-                value={getQuantity(product.id)}
-                onChange={(e) =>
-                  handleQuantityChange(product.id, e.target.value)
-                }
-                slotProps={{
-                  input: {
-                    inputProps: {
-                      min: 1,
-                      style: { textAlign: 'center', width: 40 },
-                    },
+                  flexShrink: 0,
+                  borderRadius: 2,
+                  '&:focus-visible': {
+                    outline: '2px solid',
+                    outlineColor: 'secondary.main',
+                    outlineOffset: 2,
                   },
                 }}
-                sx={{ width: 60 }}
-              />
-              <IconButton
-                size="small"
-                onClick={() => incrementQuantity(product.id)}
-                disabled={getQuantity(product.id) >= 999}
               >
-                <AddIcon fontSize="small" />
+                <Box
+                  component="img"
+                  src={product.thumbnail}
+                  alt={product.title}
+                  sx={{
+                    width: 80,
+                    height: 80,
+                    objectFit: 'contain',
+                    borderRadius: 2,
+                    border: '1px solid rgba(0,0,0,0.06)',
+                  }}
+                />
+              </Box>
+
+              <Box sx={{ flexGrow: 1, minWidth: 0, overflow: 'hidden' }}>
+                <Typography
+                  variant="subtitle1"
+                  component={RouterLink}
+                  to={`/product/${product.id}`}
+                  noWrap
+                  sx={{
+                    fontWeight: 600,
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    '&:hover': { color: 'secondary.main' },
+                  }}
+                >
+                  {product.title}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  ${product.price} за шт.
+                </Typography>
+              </Box>
+
+              <IconButton
+                color="secondary"
+                aria-label="Удалить из избранного"
+                onClick={() => removeFavorite(product.id)}
+                sx={{ display: { xs: 'flex', sm: 'none' }, flexShrink: 0 }}
+              >
+                <DeleteIcon />
               </IconButton>
             </Box>
 
-            <Button
-              variant="contained"
-              color="secondary"
-              size="small"
-              startIcon={<ShoppingCartIcon />}
-              onClick={() => handleAddToCart(product.id)}
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                justifyContent: { xs: 'space-between', sm: 'flex-end' },
+              }}
             >
-              В корзину
-            </Button>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <IconButton
+                  size="small"
+                  aria-label="Уменьшить количество"
+                  onClick={() => decrementQuantity(product.id)}
+                  disabled={getQuantity(product.id) <= 1}
+                >
+                  <RemoveIcon fontSize="small" />
+                </IconButton>
+                <TextField
+                  size="small"
+                  value={getQuantity(product.id)}
+                  onChange={(e) =>
+                    handleQuantityChange(product.id, e.target.value)
+                  }
+                  slotProps={{
+                    input: {
+                      inputProps: {
+                        min: 1,
+                        style: { textAlign: 'center', width: 40 },
+                      },
+                    },
+                  }}
+                  sx={{ width: 60 }}
+                />
+                <IconButton
+                  size="small"
+                  aria-label="Увеличить количество"
+                  onClick={() => incrementQuantity(product.id)}
+                  disabled={getQuantity(product.id) >= 999}
+                >
+                  <AddIcon fontSize="small" />
+                </IconButton>
+              </Box>
 
-            <IconButton
-              color="secondary"
-              onClick={() => removeFavorite(product.id)}
-            >
-              <DeleteIcon />
-            </IconButton>
+              <Button
+                variant="contained"
+                color="secondary"
+                size="small"
+                startIcon={<ShoppingCartIcon />}
+                onClick={() => handleAddToCart(product.id)}
+              >
+                В корзину
+              </Button>
+
+              <IconButton
+                color="secondary"
+                aria-label="Удалить из избранного"
+                onClick={() => removeFavorite(product.id)}
+                sx={{ display: { xs: 'none', sm: 'flex' } }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Box>
           </Box>
         ))}
       </Box>
