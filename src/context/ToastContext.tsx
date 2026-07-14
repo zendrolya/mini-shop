@@ -11,7 +11,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const [key, setKey] = useState(0);
 
   const showToast = useCallback(
-    (msg: string, sev: 'success' | 'info' | 'warning' | 'error' = 'success') => {
+    (
+      msg: string,
+      sev: 'success' | 'info' | 'warning' | 'error' = 'success'
+    ) => {
       setMessage(msg);
       setSeverity(sev);
       setKey((k) => k + 1);

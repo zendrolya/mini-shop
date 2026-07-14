@@ -51,7 +51,9 @@ export default function ProductPage() {
               borderRadius: 3,
             }}
           />
-          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box
+            sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}
+          >
             <Skeleton variant="rounded" width={120} height={28} />
             <Skeleton variant="rounded" width="70%" height={40} />
             <Skeleton variant="rounded" width={160} height={24} />
@@ -185,7 +187,11 @@ export default function ProductPage() {
               {product && (
                 <IconButton
                   size="large"
-                  aria-label={isFavorite(product.id) ? 'Убрать из избранного' : 'Добавить в избранное'}
+                  aria-label={
+                    isFavorite(product.id)
+                      ? 'Убрать из избранного'
+                      : 'Добавить в избранное'
+                  }
                   onClick={() => {
                     if (product) {
                       const wasFavorite = isFavorite(product.id);
