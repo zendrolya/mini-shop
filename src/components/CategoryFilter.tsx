@@ -11,6 +11,14 @@ function formatSlug(slug: string): string {
   return slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
+const chipFocusStyles = {
+  '&:focus-visible': {
+    outline: '2px solid',
+    outlineColor: 'primary.main',
+    outlineOffset: 2,
+  },
+};
+
 export default function CategoryFilter({
   categories,
   selected,
@@ -28,6 +36,7 @@ export default function CategoryFilter({
         variant={selected === '' ? 'filled' : 'outlined'}
         onClick={() => onSelect('')}
         size="small"
+        sx={chipFocusStyles}
       />
       {categories.map((slug) => (
         <Chip
@@ -38,6 +47,7 @@ export default function CategoryFilter({
           variant={selected === slug ? 'filled' : 'outlined'}
           onClick={() => onSelect(slug)}
           size="small"
+          sx={chipFocusStyles}
         />
       ))}
     </Box>

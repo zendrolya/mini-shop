@@ -7,78 +7,81 @@ import {
   IconButton,
   TextField,
   Button,
-  Divider,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { useFavorites } from '../hooks/useFavorites';
 import { useCart } from '../hooks/useCart';
-import type { CartItem } from '../types/cart';
+import { useToast } from '../hooks/useToast';
 import EmptyState from '../components/EmptyState';
-import OrderForm from '../components/OrderForm';
-import type { OrderFormValues } from '../components/OrderForm';
-import OrderConfirmation from '../components/OrderConfirmation';
 
-type Step = 'cart' | 'form' | 'confirmation';
+export default function FavoritesPage() {
+  const { items, removeFavorite, clearFavorites } = useFavorites();
+  const { addItem, items: cartItems, updateQuantity } = useCart();
+  const { showToast } = useToast();
+  const [quantities, setQuantities] = useState<Record<number, number>>({});
 
-interface OrderSnapshot {
-  items: CartItem[];
-  totalPrice: number;
-  formValues: OrderFormValues;
-}
-
-export default function CartPage() {
-  const { items, totalPrice, updateQuantity, removeItem, clearCart } =
-    useCart();
-  const [step, setStep] = useState<Step>('cart');
-  const [orderSnapshot, setOrderSnapshot] = useState<OrderSnapshot | null>(
-    null
+  const getQuantity = useCallback(
+    (productId: number) => quantities[productId] ?? 1,
+    [quantities]
   );
 
-  const handleFormSubmit = useCallback(
-    (values: OrderFormValues) => {
-      setOrderSnapshot({ items, totalPrice, formValues: values });
-      clearCart();
-      setStep('confirmation');
+  const handleQuantityChange = useCallback(
+    (productId: number, value: string) => {
+      const val = parseInt(value, 10);
+      if (!isNaN(val)) {
+        const clamped = Math.max(1, Math.min(val, 999));
+        setQuantities((prev) => ({ ...prev, [productId]: clamped }));
+      }
     },
-    [items, totalPrice, clearCart]
+    []
   );
 
-  if (items.length === 0 && step !== 'confirmation') {
+  const incrementQuantity = useCallback((productId: number) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [productId]: Math.min((prev[productId] ?? 1) + 1, 999),
+    }));
+  }, []);
+
+  const decrementQuantity = useCallback((productId: number) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [productId]: Math.max((prev[productId] ?? 1) - 1, 1),
+    }));
+  }, []);
+
+  const handleAddToCart = useCallback(
+    (productId: number) => {
+      const product = items.find((i) => i.id === productId);
+      if (!product) return;
+      const qty = getQuantity(productId);
+      const existingCartItem = cartItems.find(
+        (i) => i.product.id === productId
+      );
+      if (existingCartItem) {
+        updateQuantity(productId, existingCartItem.quantity + qty);
+      } else {
+        for (let i = 0; i < qty; i++) {
+          addItem(product);
+        }
+      }
+      showToast(`${product.title} добавлен в корзину`);
+    },
+    [items, cartItems, getQuantity, addItem, updateQuantity, showToast]
+  );
+
+  if (items.length === 0) {
     return (
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Typography variant="h2" gutterBottom>
-          Корзина
+          Избранное
         </Typography>
         <EmptyState
-          title="Ваша корзина пуста"
-          description="Добавьте товары из каталога, чтобы оформить заказ"
-        />
-      </Container>
-    );
-  }
-
-  if (step === 'confirmation' && orderSnapshot) {
-    return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <OrderConfirmation
-          items={orderSnapshot.items}
-          totalPrice={orderSnapshot.totalPrice}
-          formValues={orderSnapshot.formValues}
-        />
-      </Container>
-    );
-  }
-
-  if (step === 'form') {
-    return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <OrderForm
-          items={items}
-          totalPrice={totalPrice}
-          onSubmit={handleFormSubmit}
-          onBack={() => setStep('cart')}
+          title="Избранное пусто"
+          description="Добавьте товары из каталога, нажав на звёздочку"
         />
       </Container>
     );
@@ -94,11 +97,11 @@ export default function CartPage() {
           mb: 3,
         }}
       >
-        <Typography variant="h2">Корзина</Typography>
+        <Typography variant="h2">Избранное</Typography>
         <Button
           color="secondary"
           size="small"
-          onClick={clearCart}
+          onClick={clearFavorites}
           sx={{ textTransform: 'none' }}
         >
           Очистить
@@ -106,9 +109,9 @@ export default function CartPage() {
       </Box>
 
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        {items.map((item) => (
+        {items.map((product) => (
           <Box
-            key={item.product.id}
+            key={product.id}
             sx={{
               display: 'flex',
               flexDirection: { xs: 'column', sm: 'row' },
@@ -131,7 +134,7 @@ export default function CartPage() {
             >
               <Box
                 component={RouterLink}
-                to={`/product/${item.product.id}`}
+                to={`/product/${product.id}`}
                 sx={{
                   flexShrink: 0,
                   borderRadius: 2,
@@ -144,8 +147,8 @@ export default function CartPage() {
               >
                 <Box
                   component="img"
-                  src={item.product.thumbnail}
-                  alt={item.product.title}
+                  src={product.thumbnail}
+                  alt={product.title}
                   sx={{
                     width: 80,
                     height: 80,
@@ -160,7 +163,7 @@ export default function CartPage() {
                 <Typography
                   variant="subtitle1"
                   component={RouterLink}
-                  to={`/product/${item.product.id}`}
+                  to={`/product/${product.id}`}
                   noWrap
                   sx={{
                     fontWeight: 600,
@@ -169,17 +172,17 @@ export default function CartPage() {
                     '&:hover': { color: 'secondary.main' },
                   }}
                 >
-                  {item.product.title}
+                  {product.title}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  ${item.product.price} за шт.
+                  ${product.price} за шт.
                 </Typography>
               </Box>
 
               <IconButton
                 color="secondary"
-                aria-label="Удалить из корзины"
-                onClick={() => removeItem(item.product.id)}
+                aria-label="Удалить из избранного"
+                onClick={() => removeFavorite(product.id)}
                 sx={{ display: { xs: 'flex', sm: 'none' }, flexShrink: 0 }}
               >
                 <DeleteIcon />
@@ -198,23 +201,17 @@ export default function CartPage() {
                 <IconButton
                   size="small"
                   aria-label="Уменьшить количество"
-                  onClick={() =>
-                    updateQuantity(item.product.id, item.quantity - 1)
-                  }
-                  disabled={item.quantity <= 1}
+                  onClick={() => decrementQuantity(product.id)}
+                  disabled={getQuantity(product.id) <= 1}
                 >
                   <RemoveIcon fontSize="small" />
                 </IconButton>
                 <TextField
                   size="small"
-                  value={item.quantity}
-                  onChange={(e) => {
-                    const val = parseInt(e.target.value, 10);
-                    if (!isNaN(val)) {
-                      const clamped = Math.max(1, Math.min(val, 999));
-                      updateQuantity(item.product.id, clamped);
-                    }
-                  }}
+                  value={getQuantity(product.id)}
+                  onChange={(e) =>
+                    handleQuantityChange(product.id, e.target.value)
+                  }
                   slotProps={{
                     input: {
                       inputProps: {
@@ -228,26 +225,27 @@ export default function CartPage() {
                 <IconButton
                   size="small"
                   aria-label="Увеличить количество"
-                  onClick={() =>
-                    updateQuantity(item.product.id, item.quantity + 1)
-                  }
-                  disabled={item.quantity >= 999}
+                  onClick={() => incrementQuantity(product.id)}
+                  disabled={getQuantity(product.id) >= 999}
                 >
                   <AddIcon fontSize="small" />
                 </IconButton>
               </Box>
 
-              <Typography
-                variant="subtitle1"
-                sx={{ fontWeight: 700, minWidth: 80, textAlign: 'right' }}
+              <Button
+                variant="contained"
+                color="secondary"
+                size="small"
+                startIcon={<ShoppingCartIcon />}
+                onClick={() => handleAddToCart(product.id)}
               >
-                ${(item.product.price * item.quantity).toFixed(2)}
-              </Typography>
+                В корзину
+              </Button>
 
               <IconButton
                 color="secondary"
-                aria-label="Удалить из корзины"
-                onClick={() => removeItem(item.product.id)}
+                aria-label="Удалить из избранного"
+                onClick={() => removeFavorite(product.id)}
                 sx={{ display: { xs: 'none', sm: 'flex' } }}
               >
                 <DeleteIcon />
@@ -255,34 +253,6 @@ export default function CartPage() {
             </Box>
           </Box>
         ))}
-      </Box>
-
-      <Divider sx={{ my: 4 }} />
-
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: { xs: 'column', sm: 'row' },
-          justifyContent: 'space-between',
-          alignItems: { sm: 'center' },
-          gap: 2,
-        }}
-      >
-        <Box>
-          <Typography variant="h4" sx={{ fontWeight: 700 }}>
-            Итого: ${totalPrice.toFixed(2)}
-          </Typography>
-        </Box>
-        <Button
-          variant="contained"
-          color="secondary"
-          size="large"
-          startIcon={<ShoppingCartIcon />}
-          onClick={() => setStep('form')}
-          sx={{ px: 6 }}
-        >
-          Оформить заказ
-        </Button>
       </Box>
     </Container>
   );

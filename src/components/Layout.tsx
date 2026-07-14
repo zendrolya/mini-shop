@@ -10,14 +10,21 @@ import {
   Link,
 } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import StarIcon from '@mui/icons-material/Star';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import LightModeIcon from '@mui/icons-material/LightMode';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import { useCart } from '../hooks/useCart';
+import { useFavorites } from '../hooks/useFavorites';
+import { useColorMode } from '../hooks/useColorMode';
 
 const navLinks = [{ label: 'Каталог', to: '/' }];
 
 export default function Layout() {
   const location = useLocation();
   const { totalCount } = useCart();
+  const { totalCount: favoritesCount } = useFavorites();
+  const { mode, toggleMode } = useColorMode();
 
   return (
     <Box
@@ -39,12 +46,20 @@ export default function Layout() {
                 gap: 1,
                 textDecoration: 'none',
                 color: 'inherit',
-                mr: 3,
+                mr: { xs: 1, sm: 3 },
+                flexShrink: 0,
+                borderRadius: 1,
+                '&:focus-visible': {
+                  outline: '2px solid',
+                  outlineColor: 'secondary.main',
+                  outlineOffset: 2,
+                },
               }}
             >
               <StorefrontIcon sx={{ fontSize: 28, color: 'secondary.main' }} />
               <Typography
                 variant="h6"
+                noWrap
                 sx={{
                   fontWeight: 700,
                   letterSpacing: '-0.02em',
@@ -55,7 +70,11 @@ export default function Layout() {
               </Typography>
             </Box>
 
-            <Box sx={{ display: 'flex', gap: 1, flexGrow: 1 }}>
+            <Box
+              component="nav"
+              aria-label="Основная навигация"
+              sx={{ display: 'flex', gap: 1, flexGrow: 1 }}
+            >
               {navLinks.map((link) => (
                 <Link
                   key={link.to}
@@ -77,6 +96,11 @@ export default function Layout() {
                         ? 'rgba(233, 69, 96, 0.08)'
                         : 'transparent',
                     transition: 'all 0.2s',
+                    '&:focus-visible': {
+                      outline: '2px solid',
+                      outlineColor: 'secondary.main',
+                      outlineOffset: 2,
+                    },
                     '&:hover': {
                       backgroundColor: 'rgba(233, 69, 96, 0.06)',
                       color: 'secondary.main',
@@ -89,17 +113,82 @@ export default function Layout() {
             </Box>
 
             <IconButton
+              onClick={toggleMode}
+              aria-label={
+                mode === 'light'
+                  ? 'Переключить тёмную тему'
+                  : 'Переключить светлую тему'
+              }
+              sx={{
+                color: 'text.primary',
+                '&:focus-visible': {
+                  outline: '2px solid',
+                  outlineColor: 'secondary.main',
+                  outlineOffset: 2,
+                },
+                p: { xs: 0.5, sm: 1 },
+                '&:hover': {
+                  backgroundColor: 'rgba(233, 69, 96, 0.06)',
+                  color: 'secondary.main',
+                },
+              }}
+            >
+              {mode === 'light' ? <DarkModeIcon /> : <LightModeIcon />}
+            </IconButton>
+
+            <IconButton
+              component={RouterLink}
+              to="/favorites"
+              aria-label="Избранное"
+              sx={{
+                color:
+                  location.pathname === '/favorites'
+                    ? 'secondary.main'
+                    : 'text.primary',
+                p: { xs: 0.5, sm: 1 },
+                backgroundColor:
+                  location.pathname === '/favorites'
+                    ? 'rgba(233, 69, 96, 0.08)'
+                    : 'transparent',
+                '&:focus-visible': {
+                  outline: '2px solid',
+                  outlineColor: 'secondary.main',
+                  outlineOffset: 2,
+                },
+                '&:hover': {
+                  backgroundColor: 'rgba(233, 69, 96, 0.06)',
+                  color: 'secondary.main',
+                },
+              }}
+            >
+              <Badge
+                badgeContent={favoritesCount}
+                color="secondary"
+                invisible={favoritesCount === 0}
+              >
+                <StarIcon />
+              </Badge>
+            </IconButton>
+
+            <IconButton
               component={RouterLink}
               to="/cart"
+              aria-label="Корзина"
               sx={{
                 color:
                   location.pathname === '/cart'
                     ? 'secondary.main'
                     : 'text.primary',
+                p: { xs: 0.5, sm: 1 },
                 backgroundColor:
                   location.pathname === '/cart'
                     ? 'rgba(233, 69, 96, 0.08)'
                     : 'transparent',
+                '&:focus-visible': {
+                  outline: '2px solid',
+                  outlineColor: 'secondary.main',
+                  outlineOffset: 2,
+                },
                 '&:hover': {
                   backgroundColor: 'rgba(233, 69, 96, 0.06)',
                   color: 'secondary.main',
@@ -127,7 +216,7 @@ export default function Layout() {
         sx={{
           py: 3,
           mt: 'auto',
-          backgroundColor: 'primary.main',
+          backgroundColor: '#1a1a2e',
           color: 'rgba(255,255,255,0.7)',
         }}
       >

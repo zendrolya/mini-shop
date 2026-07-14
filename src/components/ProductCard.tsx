@@ -8,10 +8,15 @@ import {
   Typography,
   Rating,
   Button,
+  IconButton,
 } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import StarIcon from '@mui/icons-material/Star';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
 import type { Product } from '../types/product';
 import { useCart } from '../hooks/useCart';
+import { useFavorites } from '../hooks/useFavorites';
+import { useToast } from '../hooks/useToast';
 
 interface ProductCardProps {
   product: Product;
@@ -19,12 +24,34 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCart();
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const { showToast } = useToast();
+  const favorite = isFavorite(product.id);
+
+  const handleAddToCart = () => {
+    addItem(product);
+    showToast(`${product.title} добавлен в корзину`);
+  };
+
+  const handleToggleFavorite = () => {
+    toggleFavorite(product);
+    showToast(
+      favorite
+        ? `${product.title} убран из избранного`
+        : `${product.title} добавлен в избранное`
+    );
+  };
   return (
     <Card
       sx={{
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
+        '&:focus-within': {
+          outline: '2px solid',
+          outlineColor: 'secondary.main',
+          outlineOffset: 2,
+        },
       }}
     >
       <Box
@@ -71,13 +98,34 @@ export default function ProductCard({ product }: ProductCardProps) {
           </Typography>
         </CardContent>
       </Box>
-      <CardActions sx={{ p: 2, pt: 0 }}>
+      <CardActions
+        sx={{
+          p: 2,
+          pt: 0,
+          justifyContent: 'space-between',
+          '& .MuiButton-root:focus-visible, & .MuiIconButton-root:focus-visible':
+            { outline: 'none' },
+        }}
+      >
+        <IconButton
+          size="small"
+          aria-label={
+            favorite ? 'Убрать из избранного' : 'Добавить в избранное'
+          }
+          onClick={handleToggleFavorite}
+          sx={{
+            color: favorite ? 'secondary.main' : 'text.secondary',
+            '&:hover': { color: 'secondary.main' },
+          }}
+        >
+          {favorite ? <StarIcon /> : <StarBorderIcon />}
+        </IconButton>
         <Button
           fullWidth
           variant="contained"
           color="secondary"
           startIcon={<ShoppingCartIcon />}
-          onClick={() => addItem(product)}
+          onClick={handleAddToCart}
         >
           В корзину
         </Button>
