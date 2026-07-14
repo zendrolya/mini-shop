@@ -5,6 +5,7 @@ import getAppTheme from '../theme/theme';
 import { useColorMode } from '../hooks/useColorMode';
 import { CartProvider } from '../context/CartContext';
 import { FavoritesProvider } from '../context/FavoritesContext';
+import { ToastProvider } from '../context/ToastContext';
 import App from '../App';
 
 export default function ThemedApp() {
@@ -14,11 +15,13 @@ export default function ThemedApp() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <CartProvider>
-        <FavoritesProvider>
-          <App />
-        </FavoritesProvider>
-      </CartProvider>
+      <ToastProvider>
+        <CartProvider>
+          <FavoritesProvider>
+            <App />
+          </FavoritesProvider>
+        </CartProvider>
+      </ToastProvider>
     </ThemeProvider>
   );
 }

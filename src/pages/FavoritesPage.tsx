@@ -14,11 +14,13 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useFavorites } from '../hooks/useFavorites';
 import { useCart } from '../hooks/useCart';
+import { useToast } from '../hooks/useToast';
 import EmptyState from '../components/EmptyState';
 
 export default function FavoritesPage() {
   const { items, removeFavorite, clearFavorites } = useFavorites();
   const { addItem, items: cartItems, updateQuantity } = useCart();
+  const { showToast } = useToast();
   const [quantities, setQuantities] = useState<Record<number, number>>({});
 
   const getQuantity = useCallback(
@@ -66,8 +68,9 @@ export default function FavoritesPage() {
           addItem(product);
         }
       }
+      showToast(`${product.title} добавлен в корзину`);
     },
-    [items, cartItems, getQuantity, addItem, updateQuantity]
+    [items, cartItems, getQuantity, addItem, updateQuantity, showToast]
   );
 
   if (items.length === 0) {

@@ -4,8 +4,8 @@ import {
   Typography,
   Grid,
   Box,
-  CircularProgress,
   Alert,
+  Skeleton,
 } from '@mui/material';
 import { useProducts } from '../hooks/useProducts';
 import { useCategoryProducts } from '../hooks/useCategoryProducts';
@@ -111,9 +111,17 @@ export default function CatalogPage() {
       </Box>
 
       {loading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
-          <CircularProgress />
-        </Box>
+        <Grid container spacing={3}>
+          {Array.from({ length: 8 }).map((_, i) => (
+            <Grid key={i} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+              <Skeleton
+                variant="rounded"
+                height={340}
+                sx={{ borderRadius: 3 }}
+              />
+            </Grid>
+          ))}
+        </Grid>
       )}
 
       {error && (

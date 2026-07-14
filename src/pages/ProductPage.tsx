@@ -3,13 +3,13 @@ import {
   Container,
   Typography,
   Box,
-  CircularProgress,
   Alert,
   Rating,
   Chip,
   Button,
   Divider,
   IconButton,
+  Skeleton,
 } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import StarIcon from '@mui/icons-material/Star';
@@ -17,6 +17,7 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 import { useProduct } from '../hooks/useProduct';
 import { useCart } from '../hooks/useCart';
 import { useFavorites } from '../hooks/useFavorites';
+import { useToast } from '../hooks/useToast';
 import { ApiError } from '../services/api';
 
 export default function ProductPage() {
@@ -25,6 +26,7 @@ export default function ProductPage() {
   const { product, loading, error, rawError } = useProduct(productId);
   const { addItem } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { showToast } = useToast();
 
   const errorMessage =
     rawError instanceof ApiError && rawError.status === 404
@@ -34,8 +36,30 @@ export default function ProductPage() {
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       {loading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
-          <CircularProgress />
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
+            gap: 6,
+          }}
+        >
+          <Skeleton
+            variant="rounded"
+            sx={{
+              flex: { md: '0 0 40%' },
+              height: 400,
+              borderRadius: 3,
+            }}
+          />
+          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Skeleton variant="rounded" width={120} height={28} />
+            <Skeleton variant="rounded" width="70%" height={40} />
+            <Skeleton variant="rounded" width={160} height={24} />
+            <Skeleton variant="rounded" width="100%" height={60} />
+            <Skeleton variant="rounded" width={140} height={40} />
+            <Skeleton variant="rounded" width="80%" height={80} />
+            <Skeleton variant="rounded" width={200} height={48} />
+          </Box>
         </Box>
       )}
 
@@ -149,7 +173,12 @@ export default function ProductPage() {
                 size="large"
                 startIcon={<ShoppingCartIcon />}
                 sx={{ px: 4 }}
-                onClick={() => product && addItem(product)}
+                onClick={() => {
+                  if (product) {
+                    addItem(product);
+                    showToast(`${product.title} добавлен в корзину`);
+                  }
+                }}
               >
                 В корзину
               </Button>
@@ -157,7 +186,17 @@ export default function ProductPage() {
                 <IconButton
                   size="large"
                   aria-label={isFavorite(product.id) ? 'Убрать из избранного' : 'Добавить в избранное'}
-                  onClick={() => toggleFavorite(product)}
+                  onClick={() => {
+                    if (product) {
+                      const wasFavorite = isFavorite(product.id);
+                      toggleFavorite(product);
+                      showToast(
+                        wasFavorite
+                          ? `${product.title} убран из избранного`
+                          : `${product.title} добавлен в избранное`
+                      );
+                    }
+                  }}
                   sx={{
                     color: isFavorite(product.id)
                       ? 'secondary.main'
