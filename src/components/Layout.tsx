@@ -20,6 +20,21 @@ import { useColorMode } from '../hooks/useColorMode';
 
 const navLinks = [{ label: 'Каталог', to: '/' }];
 
+const navButtonFocus = {
+  '&:focus-visible': {
+    outline: '2px solid',
+    outlineColor: 'secondary.main',
+    outlineOffset: 2,
+  },
+};
+
+const navButtonHover = {
+  '&:hover': {
+    backgroundColor: 'rgba(233, 69, 96, 0.06)',
+    color: 'secondary.main',
+  },
+};
+
 export default function Layout() {
   const location = useLocation();
   const { totalCount } = useCart();
@@ -121,16 +136,9 @@ export default function Layout() {
               }
               sx={{
                 color: 'text.primary',
-                '&:focus-visible': {
-                  outline: '2px solid',
-                  outlineColor: 'secondary.main',
-                  outlineOffset: 2,
-                },
+                ...navButtonFocus,
                 p: { xs: 0.5, sm: 1 },
-                '&:hover': {
-                  backgroundColor: 'rgba(233, 69, 96, 0.06)',
-                  color: 'secondary.main',
-                },
+                ...navButtonHover,
               }}
             >
               {mode === 'light' ? <DarkModeIcon /> : <LightModeIcon />}
@@ -150,15 +158,8 @@ export default function Layout() {
                   location.pathname === '/favorites'
                     ? 'rgba(233, 69, 96, 0.08)'
                     : 'transparent',
-                '&:focus-visible': {
-                  outline: '2px solid',
-                  outlineColor: 'secondary.main',
-                  outlineOffset: 2,
-                },
-                '&:hover': {
-                  backgroundColor: 'rgba(233, 69, 96, 0.06)',
-                  color: 'secondary.main',
-                },
+                ...navButtonFocus,
+                ...navButtonHover,
               }}
             >
               <Badge
@@ -184,15 +185,8 @@ export default function Layout() {
                   location.pathname === '/cart'
                     ? 'rgba(233, 69, 96, 0.08)'
                     : 'transparent',
-                '&:focus-visible': {
-                  outline: '2px solid',
-                  outlineColor: 'secondary.main',
-                  outlineOffset: 2,
-                },
-                '&:hover': {
-                  backgroundColor: 'rgba(233, 69, 96, 0.06)',
-                  color: 'secondary.main',
-                },
+                ...navButtonFocus,
+                ...navButtonHover,
               }}
             >
               <Badge

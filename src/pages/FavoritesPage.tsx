@@ -149,6 +149,7 @@ export default function FavoritesPage() {
                   component="img"
                   src={product.thumbnail}
                   alt={product.title}
+                  loading="lazy"
                   sx={{
                     width: 80,
                     height: 80,

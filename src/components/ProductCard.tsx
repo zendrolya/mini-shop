@@ -1,3 +1,4 @@
+import { memo, useCallback } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import {
   Card,
@@ -22,25 +23,25 @@ interface ProductCardProps {
   product: Product;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default memo(function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
   const { showToast } = useToast();
   const favorite = isFavorite(product.id);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = useCallback(() => {
     addItem(product);
     showToast(`${product.title} добавлен в корзину`);
-  };
+  }, [addItem, product, showToast]);
 
-  const handleToggleFavorite = () => {
+  const handleToggleFavorite = useCallback(() => {
     toggleFavorite(product);
     showToast(
       favorite
         ? `${product.title} убран из избранного`
         : `${product.title} добавлен в избранное`
     );
-  };
+  }, [toggleFavorite, product, favorite, showToast]);
   return (
     <Card
       sx={{
@@ -69,6 +70,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           component="img"
           image={product.thumbnail}
           alt={product.title}
+          loading="lazy"
           sx={{ height: 200, objectFit: 'contain', p: 2 }}
         />
         <CardContent
@@ -132,4 +134,4 @@ export default function ProductCard({ product }: ProductCardProps) {
       </CardActions>
     </Card>
   );
-}
+});

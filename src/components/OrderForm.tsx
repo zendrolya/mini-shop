@@ -1,11 +1,10 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   Box,
   Button,
   TextField,
   Typography,
   Divider,
-  Chip,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PersonIcon from '@mui/icons-material/Person';
@@ -14,6 +13,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import PhoneIcon from '@mui/icons-material/Phone';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import type { CartItem } from '../types/cart';
+import StepsIndicator from './StepsIndicator';
 
 interface OrderFormProps {
   items: CartItem[];
@@ -101,22 +101,28 @@ export default function OrderForm({
     [values]
   );
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const newErrors = validate(values);
-    setErrors(newErrors);
-    setTouched({
-      name: true,
-      email: true,
-      address: true,
-      phone: true,
-    });
-    if (Object.keys(newErrors).length === 0) {
-      onSubmit(values);
-    }
-  };
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      const newErrors = validate(values);
+      setErrors(newErrors);
+      setTouched({
+        name: true,
+        email: true,
+        address: true,
+        phone: true,
+      });
+      if (Object.keys(newErrors).length === 0) {
+        onSubmit(values);
+      }
+    },
+    [values, onSubmit]
+  );
 
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  const totalItems = useMemo(
+    () => items.reduce((sum, item) => sum + item.quantity, 0),
+    [items]
+  );
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -133,19 +139,7 @@ export default function OrderForm({
       </Box>
 
       {/* Steps indicator */}
-      <Box sx={{ display: 'flex', gap: 1 }}>
-        <Chip
-          label="1. Корзина"
-          variant="outlined"
-          sx={{ borderColor: 'rgba(0,0,0,0.12)', color: 'text.secondary' }}
-        />
-        <Chip label="2. Данные" color="secondary" sx={{ fontWeight: 600 }} />
-        <Chip
-          label="3. Подтверждение"
-          variant="outlined"
-          sx={{ borderColor: 'rgba(0,0,0,0.12)', color: 'text.secondary' }}
-        />
-      </Box>
+      <StepsIndicator activeStep={1} />
 
       {/* Content */}
       <Box
