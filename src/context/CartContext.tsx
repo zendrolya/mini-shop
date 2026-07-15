@@ -118,10 +118,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     []
   );
 
-  const clearCart = useCallback(
-    () => dispatch({ type: 'CLEAR_CART' }),
-    []
-  );
+  const clearCart = useCallback(() => dispatch({ type: 'CLEAR_CART' }), []);
 
   const value = useMemo(
     () => ({
@@ -133,7 +130,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
       updateQuantity,
       clearCart,
     }),
-    [state.items, totalCount, totalPrice, addItem, removeItem, updateQuantity, clearCart]
+    [
+      state.items,
+      totalCount,
+      totalPrice,
+      addItem,
+      removeItem,
+      updateQuantity,
+      clearCart,
+    ]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

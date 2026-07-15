@@ -203,9 +203,7 @@ export default function ProductPage() {
                   );
                 }}
                 sx={{
-                  color: favorite
-                    ? 'secondary.main'
-                    : 'text.secondary',
+                  color: favorite ? 'secondary.main' : 'text.secondary',
                   border: '1px solid rgba(0,0,0,0.12)',
                   '&:focus-visible': {
                     outline: '2px solid',

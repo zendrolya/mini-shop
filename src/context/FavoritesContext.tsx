@@ -114,7 +114,15 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
       removeFavorite,
       clearFavorites,
     }),
-    [state.items, totalCount, isFavorite, toggleFavorite, addFavorite, removeFavorite, clearFavorites]
+    [
+      state.items,
+      totalCount,
+      isFavorite,
+      toggleFavorite,
+      addFavorite,
+      removeFavorite,
+      clearFavorites,
+    ]
   );
 
   return (
