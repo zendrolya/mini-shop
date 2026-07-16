@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "deploy": "vite build && gh-pages -d dist",
     "lint": "eslint .",
+    "prettier": "npx prettier . --write",
     "preview": "vite preview",
     "prepare": "husky"
   },
