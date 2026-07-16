@@ -2,6 +2,8 @@
 
 ![Desktop preview](./screenshots/desktop-preview.jpg)
 
+**Важное примечание**: данная ветка предназначена для автодеплоя демо страницы сайта на GitHub Pages.
+
 ## Оглавление
 
 - [Mini-shop](#mini-shop)
