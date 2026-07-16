@@ -77,7 +77,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }, [state]);
 
-  const totalCount = useMemo(() => state.items.length, [state.items]);
+  const totalCount = state.items.length;
 
   const isFavorite = useCallback(
     (productId: number) => state.items.some((i) => i.id === productId),

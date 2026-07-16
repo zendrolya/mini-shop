@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+
 import { Link as RouterLink } from 'react-router-dom';
 import { Box, Button, Typography } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -18,10 +18,7 @@ export default function OrderConfirmation({
   totalPrice,
   formValues,
 }: OrderConfirmationProps) {
-  const totalItems = useMemo(
-    () => items.reduce((sum, item) => sum + item.quantity, 0),
-    [items]
-  );
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -41,7 +38,7 @@ export default function OrderConfirmation({
           p: 6,
           borderRadius: 3,
           backgroundColor: 'background.paper',
-          border: '1px solid rgba(0,0,0,0.06)',
+          border: '1px solid divider',
         }}
       >
         <CheckCircleIcon sx={{ fontSize: 80, color: 'success.main' }} />
@@ -64,7 +61,7 @@ export default function OrderConfirmation({
           p: 4,
           borderRadius: 3,
           backgroundColor: 'background.paper',
-          border: '1px solid rgba(0,0,0,0.06)',
+          border: '1px solid divider',
         }}
       >
         <Typography variant="h4" sx={{ fontWeight: 600, mb: 3 }}>
@@ -86,7 +83,7 @@ export default function OrderConfirmation({
                   height: 48,
                   objectFit: 'contain',
                   borderRadius: 1.5,
-                  border: '1px solid rgba(0,0,0,0.06)',
+                  border: '1px solid divider',
                   flexShrink: 0,
                 }}
               />
@@ -127,7 +124,7 @@ export default function OrderConfirmation({
           </Box>
         </Box>
 
-        <Box sx={{ borderTop: '1px solid rgba(0,0,0,0.06)', pt: 2, mt: 2 }}>
+        <Box sx={{ borderTop: '1px solid divider', pt: 2, mt: 2 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Typography variant="h4" sx={{ fontWeight: 700 }}>
               Итого
@@ -148,7 +145,7 @@ export default function OrderConfirmation({
           p: 4,
           borderRadius: 3,
           backgroundColor: 'background.paper',
-          border: '1px solid rgba(0,0,0,0.06)',
+          border: '1px solid divider',
         }}
       >
         <Typography variant="h4" sx={{ fontWeight: 600, mb: 2 }}>

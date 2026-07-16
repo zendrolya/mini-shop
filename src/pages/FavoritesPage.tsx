@@ -119,7 +119,7 @@ export default function FavoritesPage() {
               gap: { xs: 1.5, sm: 2 },
               p: 2,
               borderRadius: 3,
-              border: '1px solid rgba(0,0,0,0.06)',
+              border: '1px solid divider',
               backgroundColor: 'background.paper',
             }}
           >
@@ -155,7 +155,7 @@ export default function FavoritesPage() {
                     height: 80,
                     objectFit: 'contain',
                     borderRadius: 2,
-                    border: '1px solid rgba(0,0,0,0.06)',
+                    border: '1px solid divider',
                   }}
                 />
               </Box>
