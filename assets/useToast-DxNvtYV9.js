@@ -1,1 +1,0 @@
-import{Ft as e,Pt as t,o as n}from"./index-D4AvFRe2.js";var r=e(t(),1);function i(){let e=(0,r.useContext)(n);if(!e)throw Error(`useToast должен использоваться в ToastProvider`);return e}export{i as t};
