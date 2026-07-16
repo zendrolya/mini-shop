@@ -12,6 +12,14 @@ interface PaginationProps {
 
 type PageItem = number | 'ellipsis-left' | 'ellipsis-right';
 
+const pageButtonSx = {
+  minWidth: { xs: 40, sm: 50 },
+  minHeight: { xs: 40, sm: 50 },
+  p: { xs: '4px 6px', sm: '8px 24px' },
+  fontSize: { xs: '0.8rem', sm: '0.95rem' },
+  flexShrink: 0,
+} as const;
+
 function buildPageRange(current: number, total: number): PageItem[] {
   if (total <= 7) {
     return Array.from({ length: total }, (_, i) => i + 1);
@@ -47,7 +55,7 @@ export default function Pagination({
   if (totalPages <= 1) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-        <Button variant="outlined" disabled>
+        <Button variant="outlined" disabled sx={pageButtonSx}>
           1
         </Button>
       </Box>
@@ -69,18 +77,14 @@ export default function Pagination({
         alignItems: 'center',
         mt: 4,
         gap: { xs: 0.25, sm: 0.5 },
-        flexWrap: 'wrap',
+        flexWrap: 'nowrap',
       }}
     >
       <Button
         disabled={isFirst}
         aria-label="Первая страница"
         onClick={() => onPageChange(1)}
-        sx={{
-          minWidth: { xs: 32, sm: 40 },
-          minHeight: { xs: 32, sm: 40 },
-          display: { xs: 'none', sm: 'inline-flex' },
-        }}
+        sx={{ ...pageButtonSx, display: { xs: 'none', sm: 'inline-flex' } }}
       >
         <FirstPageIcon fontSize="small" />
       </Button>
@@ -88,7 +92,7 @@ export default function Pagination({
         disabled={isFirst}
         aria-label="Предыдущая страница"
         onClick={() => onPageChange(page - 1)}
-        sx={{ minWidth: { xs: 32, sm: 40 }, minHeight: { xs: 32, sm: 40 } }}
+        sx={pageButtonSx}
       >
         <ChevronLeftIcon fontSize="small" />
       </Button>
@@ -98,9 +102,10 @@ export default function Pagination({
             <Typography
               key={item}
               sx={{
-                minWidth: { xs: 16, sm: 24 },
+                minWidth: { xs: 12, sm: 24 },
                 textAlign: 'center',
                 userSelect: 'none',
+                flexShrink: 0,
               }}
               aria-hidden
             >
@@ -115,7 +120,7 @@ export default function Pagination({
             aria-current={item === page ? 'page' : undefined}
             aria-label={`Страница ${item}`}
             onClick={() => onPageChange(item)}
-            sx={{ minWidth: { xs: 32, sm: 40 }, minHeight: { xs: 32, sm: 40 } }}
+            sx={pageButtonSx}
           >
             {item}
           </Button>
@@ -125,7 +130,7 @@ export default function Pagination({
         disabled={isLast}
         aria-label="Следующая страница"
         onClick={() => onPageChange(page + 1)}
-        sx={{ minWidth: { xs: 32, sm: 40 }, minHeight: { xs: 32, sm: 40 } }}
+        sx={pageButtonSx}
       >
         <ChevronRightIcon fontSize="small" />
       </Button>
@@ -133,11 +138,7 @@ export default function Pagination({
         disabled={isLast}
         aria-label="Последняя страница"
         onClick={() => onPageChange(totalPages)}
-        sx={{
-          minWidth: { xs: 32, sm: 40 },
-          minHeight: { xs: 32, sm: 40 },
-          display: { xs: 'none', sm: 'inline-flex' },
-        }}
+        sx={{ ...pageButtonSx, display: { xs: 'none', sm: 'inline-flex' } }}
       >
         <LastPageIcon fontSize="small" />
       </Button>

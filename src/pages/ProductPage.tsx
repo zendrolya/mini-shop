@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+
 import { useParams } from 'react-router-dom';
 import {
   Container,
@@ -29,10 +29,7 @@ export default function ProductPage() {
   const { isFavorite, toggleFavorite } = useFavorites();
   const { showToast } = useToast();
 
-  const favorite = useMemo(
-    () => (product ? isFavorite(product.id) : false),
-    [product, isFavorite]
-  );
+  const favorite = product ? isFavorite(product.id) : false;
 
   const errorMessage =
     rawError instanceof ApiError && rawError.status === 404
@@ -93,7 +90,7 @@ export default function ProductPage() {
               justifyContent: 'center',
               backgroundColor: 'background.paper',
               borderRadius: 3,
-              border: '1px solid rgba(0,0,0,0.06)',
+              border: '1px solid divider',
               p: 3,
             }}
           >
@@ -204,7 +201,7 @@ export default function ProductPage() {
                 }}
                 sx={{
                   color: favorite ? 'secondary.main' : 'text.secondary',
-                  border: '1px solid rgba(0,0,0,0.12)',
+                  border: '1px solid divider',
                   '&:focus-visible': {
                     outline: '2px solid',
                     outlineColor: 'secondary.main',

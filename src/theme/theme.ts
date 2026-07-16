@@ -28,6 +28,11 @@ const lightPalette = {
   warning: {
     main: '#f39c12',
   },
+  divider: 'rgba(0,0,0,0.06)',
+  footer: {
+    main: '#1a1a2e',
+    text: 'rgba(255,255,255,0.7)',
+  },
 };
 
 const darkPalette = {
@@ -56,6 +61,11 @@ const darkPalette = {
   },
   warning: {
     main: '#f39c12',
+  },
+  divider: 'rgba(255,255,255,0.08)',
+  footer: {
+    main: '#1a1a2e',
+    text: 'rgba(255,255,255,0.7)',
   },
 };
 

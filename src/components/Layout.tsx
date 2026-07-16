@@ -210,8 +210,8 @@ export default function Layout() {
         sx={{
           py: 3,
           mt: 'auto',
-          backgroundColor: '#1a1a2e',
-          color: 'rgba(255,255,255,0.7)',
+          backgroundColor: 'footer.main',
+          color: 'footer.text',
         }}
       >
         <Container maxWidth="lg">

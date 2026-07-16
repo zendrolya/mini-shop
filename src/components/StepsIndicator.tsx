@@ -2,7 +2,7 @@ import { Box, Chip } from '@mui/material';
 
 const STEPS = ['Корзина', 'Данные', 'Подтверждение'];
 const STEP_OUTLINED_SX = {
-  borderColor: 'rgba(0,0,0,0.12)',
+  borderColor: 'divider',
   color: 'text.secondary',
 } as const;
 

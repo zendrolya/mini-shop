@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback } from 'react';
 import { Box, Button, TextField, Typography, Divider } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PersonIcon from '@mui/icons-material/Person';
@@ -113,10 +113,7 @@ export default function OrderForm({
     [values, onSubmit]
   );
 
-  const totalItems = useMemo(
-    () => items.reduce((sum, item) => sum + item.quantity, 0),
-    [items]
-  );
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -156,7 +153,7 @@ export default function OrderForm({
             p: 4,
             borderRadius: 3,
             backgroundColor: 'background.paper',
-            border: '1px solid rgba(0,0,0,0.06)',
+            border: '1px solid divider',
           }}
         >
           <Typography variant="h3" sx={{ fontWeight: 600 }}>
@@ -272,7 +269,7 @@ export default function OrderForm({
             p: 3,
             borderRadius: 3,
             backgroundColor: 'background.paper',
-            border: '1px solid rgba(0,0,0,0.06)',
+            border: '1px solid divider',
             alignSelf: 'flex-start',
             position: { md: 'sticky' },
             top: { md: 100 },
@@ -299,7 +296,7 @@ export default function OrderForm({
                     height: 44,
                     objectFit: 'contain',
                     borderRadius: 1.5,
-                    border: '1px solid rgba(0,0,0,0.06)',
+                    border: '1px solid divider',
                     flexShrink: 0,
                   }}
                 />
