@@ -84,16 +84,25 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     [state.items]
   );
 
-  const toggleFavorite = (product: Product) =>
-    dispatch({ type: 'TOGGLE_FAVORITE', product });
+  const toggleFavorite = useCallback(
+    (product: Product) => dispatch({ type: 'TOGGLE_FAVORITE', product }),
+    []
+  );
 
-  const addFavorite = (product: Product) =>
-    dispatch({ type: 'ADD_FAVORITE', product });
+  const addFavorite = useCallback(
+    (product: Product) => dispatch({ type: 'ADD_FAVORITE', product }),
+    []
+  );
 
-  const removeFavorite = (productId: number) =>
-    dispatch({ type: 'REMOVE_FAVORITE', productId });
+  const removeFavorite = useCallback(
+    (productId: number) => dispatch({ type: 'REMOVE_FAVORITE', productId }),
+    []
+  );
 
-  const clearFavorites = () => dispatch({ type: 'CLEAR_FAVORITES' });
+  const clearFavorites = useCallback(
+    () => dispatch({ type: 'CLEAR_FAVORITES' }),
+    []
+  );
 
   const value = useMemo(
     () => ({
@@ -105,7 +114,15 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
       removeFavorite,
       clearFavorites,
     }),
-    [state.items, totalCount, isFavorite]
+    [
+      state.items,
+      totalCount,
+      isFavorite,
+      toggleFavorite,
+      addFavorite,
+      removeFavorite,
+      clearFavorites,
+    ]
   );
 
   return (

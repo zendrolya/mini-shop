@@ -146,6 +146,7 @@ export default function CartPage() {
                   component="img"
                   src={item.product.thumbnail}
                   alt={item.product.title}
+                  loading="lazy"
                   sx={{
                     width: 80,
                     height: 80,

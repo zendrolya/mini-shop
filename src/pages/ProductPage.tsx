@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Container,
@@ -27,6 +28,11 @@ export default function ProductPage() {
   const { addItem } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
   const { showToast } = useToast();
+
+  const favorite = useMemo(
+    () => (product ? isFavorite(product.id) : false),
+    [product, isFavorite]
+  );
 
   const errorMessage =
     rawError instanceof ApiError && rawError.status === 404
@@ -95,6 +101,7 @@ export default function ProductPage() {
               component="img"
               src={product.thumbnail}
               alt={product.title}
+              loading="lazy"
               sx={{
                 maxWidth: '100%',
                 maxHeight: 400,
@@ -176,53 +183,42 @@ export default function ProductPage() {
                 startIcon={<ShoppingCartIcon />}
                 sx={{ px: 4 }}
                 onClick={() => {
-                  if (product) {
-                    addItem(product);
-                    showToast(`${product.title} добавлен в корзину`);
-                  }
+                  addItem(product);
+                  showToast(`${product.title} добавлен в корзину`);
                 }}
               >
                 В корзину
               </Button>
-              {product && (
-                <IconButton
-                  size="large"
-                  aria-label={
-                    isFavorite(product.id)
-                      ? 'Убрать из избранного'
-                      : 'Добавить в избранное'
-                  }
-                  onClick={() => {
-                    if (product) {
-                      const wasFavorite = isFavorite(product.id);
-                      toggleFavorite(product);
-                      showToast(
-                        wasFavorite
-                          ? `${product.title} убран из избранного`
-                          : `${product.title} добавлен в избранное`
-                      );
-                    }
-                  }}
-                  sx={{
-                    color: isFavorite(product.id)
-                      ? 'secondary.main'
-                      : 'text.secondary',
-                    border: '1px solid rgba(0,0,0,0.12)',
-                    '&:focus-visible': {
-                      outline: '2px solid',
-                      outlineColor: 'secondary.main',
-                      outlineOffset: 2,
-                    },
-                    '&:hover': { color: 'secondary.main' },
-                  }}
-                >
-                  {isFavorite(product.id) ? (
-                    <StarIcon fontSize="large" />
-                  ) : (
-                    <StarBorderIcon fontSize="large" />
-                  )}
-                </IconButton>
-              )}
+              <IconButton
+                size="large"
+                aria-label={
+                  favorite ? 'Убрать из избранного' : 'Добавить в избранное'
+                }
+                onClick={() => {
+                  toggleFavorite(product);
+                  showToast(
+                    favorite
+                      ? `${product.title} убран из избранного`
+                      : `${product.title} добавлен в избранное`
+                  );
+                }}
+                sx={{
+                  color: favorite ? 'secondary.main' : 'text.secondary',
+                  border: '1px solid rgba(0,0,0,0.12)',
+                  '&:focus-visible': {
+                    outline: '2px solid',
+                    outlineColor: 'secondary.main',
+                    outlineOffset: 2,
+                  },
+                  '&:hover': { color: 'secondary.main' },
+                }}
+              >
+                {favorite ? (
+                  <StarIcon fontSize="large" />
+                ) : (
+                  <StarBorderIcon fontSize="large" />
+                )}
+              </IconButton>
             </Box>
           </Box>
         </Box>

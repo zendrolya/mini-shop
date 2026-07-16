@@ -1,9 +1,11 @@
+import { useMemo } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { Box, Button, Typography, Chip } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import type { CartItem } from '../types/cart';
 import type { OrderFormValues } from './OrderForm';
+import StepsIndicator from './StepsIndicator';
 
 interface OrderConfirmationProps {
   items: CartItem[];
@@ -16,7 +18,10 @@ export default function OrderConfirmation({
   totalPrice,
   formValues,
 }: OrderConfirmationProps) {
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  const totalItems = useMemo(
+    () => items.reduce((sum, item) => sum + item.quantity, 0),
+    [items]
+  );
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -24,23 +29,7 @@ export default function OrderConfirmation({
       <Typography variant="h2">Оформление заказа</Typography>
 
       {/* Steps indicator */}
-      <Box sx={{ display: 'flex', gap: 1 }}>
-        <Chip
-          label="1. Корзина"
-          variant="outlined"
-          sx={{ borderColor: 'rgba(0,0,0,0.12)', color: 'text.secondary' }}
-        />
-        <Chip
-          label="2. Данные"
-          variant="outlined"
-          sx={{ borderColor: 'rgba(0,0,0,0.12)', color: 'text.secondary' }}
-        />
-        <Chip
-          label="3. Подтверждение"
-          color="secondary"
-          sx={{ fontWeight: 600 }}
-        />
-      </Box>
+      <StepsIndicator activeStep={2} />
 
       {/* Success message */}
       <Box
