@@ -1,0 +1,1 @@
+import{g as e,ht as t}from"./index-D4AvFRe2.js";var n=t(),r=e((0,n.jsx)(`path`,{d:`M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z`}),`Delete`),i=e((0,n.jsx)(`path`,{d:`M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z`}),`Add`),a=e((0,n.jsx)(`path`,{d:`M19 13H5v-2h14z`}),`Remove`);export{i as n,r,a as t};
